@@ -87,6 +87,13 @@ jobs:
       name: Setup Python ${{ matrix.python-version }}
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Cache pip dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'requirements-admin.txt', 'requirements-starlette.txt', 'requirements-dev.txt', 'requirements-provider.txt', 'requirements-manager.txt', 'requirements-pubsub.txt') }}-${{ matrix.python-version }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
     - name: Install and run Oracle
       run: |
         docker run \
@@ -127,7 +134,6 @@ jobs:
         pip3 install -r requirements-dev.txt
         pip3 install -r requirements-provider.txt
         pip3 install -r requirements-manager.txt
-        pip3 install -r requirements-django.txt
         pip3 install -r requirements-pubsub.txt
         pip3 install .
         pip3 install GDAL==`gdal-config --version`
